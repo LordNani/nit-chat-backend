@@ -28,7 +28,7 @@ const httpsServer = https.createServer(credentials, app);
 
 //creating new websokcet server
 
-const wss = new ws.Server({httpsServer});
+const wss = new ws.Server({server:httpsServer});
 
 //handling connections to socket
 wss.on('connection', onConnection)
