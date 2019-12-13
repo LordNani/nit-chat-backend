@@ -3,9 +3,11 @@
 require('dotenv').config()
 const express = require('express');
 const path = require('path');
-const https = require('https');
+const http = require('http');
+const fs = require('fs');
 const bodyParser = require('body-parser');
-const ws = require('ws');
+const ws = new require('ws');
+const forceSsl = require('express-force-ssl');
 
 
 const sequelize = require('./config/sequelize.config')
@@ -13,13 +15,20 @@ const sequelize = require('./config/sequelize.config')
 const loginController = require('./controllers/login.controller')
 
 const { onConnection, onMessage } = require('./realtime/handlers')
+
+var privateKey = fs.readFileSync('privatekey.pem').toString();
+var certificate = fs.readFileSync('certificate.pem').toString();
+
+const ca = fs.readFileSync(__dirname + '/ssl/intermediate.crt', 'utf8')
+
+var credentials = crypto.createCredentials({key: privateKey, cert: certificate});
 //creating express server
 const app = express();
-const httpsServer = https.createServer(app);
+const httpServer = http.createServer(app);
 
 //creating new websokcet server
 
-const wss = new ws.Server({server: httpsServer});
+const wss = new ws.Server({noServer: true});
 
 //handling connections to socket
 wss.on('connection', onConnection)
@@ -64,5 +73,5 @@ app.post('/api/login', loginController)
 
 
 
-httpsServer.listen(3030, () => console.log('I am listening!'));
+httpServer.listen(3030, () => console.log('I am listening!'));
 
