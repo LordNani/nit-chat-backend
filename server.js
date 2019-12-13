@@ -3,7 +3,7 @@
 require('dotenv').config()
 const express = require('express');
 const path = require('path');
-const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const ws = new require('ws');
@@ -16,19 +16,19 @@ const loginController = require('./controllers/login.controller')
 
 const { onConnection, onMessage } = require('./realtime/handlers')
 
-var privateKey = fs.readFileSync('privatekey.pem').toString();
-var certificate = fs.readFileSync('certificate.pem').toString();
+var key = fs.readFileSync('privatekey.pem').toString();
+var cert = fs.readFileSync('certificate.pem').toString();
 
 const ca = fs.readFileSync(__dirname + '/ssl/intermediate.crt', 'utf8')
 
-var credentials = crypto.createCredentials({key: privateKey, cert: certificate});
+const credentials = { key, cert, ca };
 //creating express server
 const app = express();
-const httpServer = http.createServer(app);
+const httpsServer = https.createServer(credentials, app);
 
 //creating new websokcet server
 
-const wss = new ws.Server({noServer: true});
+const wss = new ws.Server({httpsServer});
 
 //handling connections to socket
 wss.on('connection', onConnection)
@@ -73,5 +73,5 @@ app.post('/api/login', loginController)
 
 
 
-httpServer.listen(3030, () => console.log('I am listening!'));
+httpsServer.listen(3030, () => console.log('I am listening!'));
 
