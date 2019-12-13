@@ -73,4 +73,4 @@ app.post('/api/login', loginController)
 
 
 
-server.listen(8443, () => console.log('HTTPS LISTENING'));
+server.listen(443, () => console.log('HTTPS LISTENING'));
