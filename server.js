@@ -6,7 +6,7 @@ const path = require('path');
 const https = require('https');
 const fs = require('fs');
 const bodyParser = require('body-parser');
-const ws = new require('ws');
+const ws = require('ws');
 const forceSsl = require('express-force-ssl');
 
 
@@ -21,14 +21,14 @@ const cert = fs.readFileSync('certificate.pem').toString();
 
 const ca = fs.readFileSync('intermediate.pem').toString();
 
-const credentials = { key, cert, ca };
+const credentials = { key, cert };
 //creating express server
 const app = express();
 const httpsServer = https.createServer(credentials, app);
 
 //creating new websokcet server
 
-const wss = new ws.Server({server:httpsServer});
+const wss = new ws.Server({noServer: true});
 
 //handling connections to socket
 wss.on('connection', onConnection)
@@ -73,5 +73,5 @@ app.post('/api/login', loginController)
 
 
 
-httpsServer.listen(3030, () => console.log('I am listening!'));
+httpsServer.listen(8443, () => console.log('HTTPS LISTENING'));
 
