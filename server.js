@@ -16,10 +16,10 @@ const loginController = require('./controllers/login.controller')
 
 const { onConnection, onMessage } = require('./realtime/handlers')
 
-var key = fs.readFileSync('privatekey.pem').toString();
-var cert = fs.readFileSync('certificate.pem').toString();
+const key = fs.readFileSync('privatekey.pem').toString();
+const cert = fs.readFileSync('certificate.pem').toString();
 
-const ca = fs.readFileSync(__dirname + '/ssl/intermediate.crt', 'utf8')
+const ca = fs.readFileSync('intermediate.pem').toString();
 
 const credentials = { key, cert, ca };
 //creating express server
