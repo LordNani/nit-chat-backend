@@ -24,11 +24,11 @@ const ca = fs.readFileSync('intermediate.pem').toString();
 const credentials = { key, cert };
 //creating express server
 const app = express();
-const httpsServer = https.createServer(credentials, app);
+const server = https.createServer(credentials, app);
 
 //creating new websokcet server
 
-const wss = new ws.Server({noServer: true});
+const wss = new ws.Server({server});
 
 //handling connections to socket
 wss.on('connection', onConnection)
@@ -73,5 +73,4 @@ app.post('/api/login', loginController)
 
 
 
-httpsServer.listen(8443, () => console.log('HTTPS LISTENING'));
-
+server.listen(8443, () => console.log('HTTPS LISTENING'));
