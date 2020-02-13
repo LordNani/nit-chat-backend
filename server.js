@@ -16,15 +16,16 @@ const loginController = require('./controllers/login.controller')
 
 const { onConnection, onMessage } = require('./realtime/handlers')
 
-const key = fs.readFileSync('privatekey.pem').toString();
-const cert = fs.readFileSync('certificate.pem').toString();
+const ca = fs.readFileSync('./intermediate.pem', 'utf8');
 
-const ca = fs.readFileSync('intermediate.pem').toString();
-
-const credentials = { key, cert };
+const options = {
+  key: fs.readFileSync('./privatekey.pem'),
+  cert: fs.readFileSync('./certificate.pem'),
+  ca: fs.readFileSync('./intermediate.pem'),
+};
 //creating express server
 const app = express();
-const server = https.createServer(credentials, app);
+const server = https.createServer(options, app);
 
 //creating new websokcet server
 
