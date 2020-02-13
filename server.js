@@ -3,29 +3,20 @@
 require('dotenv').config()
 const express = require('express');
 const path = require('path');
-const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const ws = require('ws');
-const forceSsl = require('express-force-ssl');
 
 
-const sequelize = require('./config/sequelize.config')
+//const sequelize = require('./config/sequelize.config')
 
 const loginController = require('./controllers/login.controller')
 
 const { onConnection, onMessage } = require('./realtime/handlers')
-
-const ca = fs.readFileSync('./intermediate.pem', 'utf8');
-
-const options = {
-  key: fs.readFileSync('./privatekey.pem'),
-  cert: fs.readFileSync('./certificate.pem'),
-  ca: fs.readFileSync('./intermediate.pem'),
-};
 //creating express server
 const app = express();
-const server = https.createServer(options, app);
+const server = http.createServer(app);
 
 //creating new websokcet server
 
@@ -36,10 +27,10 @@ wss.on('connection', onConnection)
 wss.on('message', onMessage)
 
 //sync with database 
-sequelize.sync().then(result => {
-  console.log('Tables created and updated')
-})
-.catch(err => console.log(err))
+// sequelize.sync().then(result => {
+//   console.log('Tables created and updated')
+// })
+// .catch(err => console.log(err));
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json())
@@ -74,4 +65,4 @@ app.post('/api/login', loginController)
 
 
 
-server.listen(8443, () => console.log('HTTPS LISTENING'));
+server.listen(8443, () => console.log('HTTP LISTENING'));
